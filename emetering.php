@@ -20,12 +20,13 @@ if ($conn->connect_error) {
 $enddate = $date;
 $newdate = strtotime($enddate);
 $startdate = date("Y-m-d", strtotime("-1 month", $newdate));
+if($startdate < "2017-10-29") $startdate = "2017-10-29";
 
 for($i=$tlength; $i>0; $i--){		
 	//echo $startdate.PHP_EOL;
 	//echo $enddate.PHP_EOL;	
 	
-	$sql = 'SELECT MIN(date_format(`Datetime`, "%Y-%m-%d")) AS "StartDate", MAX(date_format(`Datetime`, "%Y-%m-%d")) AS "EndDate", `Unit`, MAX(`Reading`) - MIN(`Reading`) AS "Reading"FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, "%Y-%m-%d") BETWEEN "'.$startdate.'" AND "'.$enddate.'" GROUP BY `Unit`;';
+	$sql = 'SELECT "'.$startdate.'" AS "StartDate", "'.$enddate.'" AS "EndDate", r1.`Unit`, MAX(r2.`Reading`) - MAX(r1.`Reading`) AS "Reading" FROM `readings` r1, `readings` r2 WHERE r1.`Remarks` = "R" AND r2.`Remarks` = "R" AND date_format(r1.`Datetime`, "%Y-%m-%d") = "'.$startdate.'" AND date_format(r2.`Datetime`, "%Y-%m-%d") = "'.$enddate.'" AND  r1.`Unit` = r2.`Unit` GROUP BY r1.`Unit`, r2.`Unit`;';
 	
 	$result = $conn->query($sql);
 
@@ -40,6 +41,7 @@ for($i=$tlength; $i>0; $i--){
 		$enddate = date("Y-m-d", strtotime("-1 month", $newdate));
 		$newdate = strtotime($startdate);
 		$startdate = date("Y-m-d", strtotime("-1 month", $newdate));	
+		if($startdate < "2017-10-29") $startdate = "2017-10-29";
 		
 	}else break;	
 }

@@ -15,6 +15,7 @@ function geteMeterData(date, callback){
 ///////////////////////////////////////////////////////////
 
 function onReset() {
+  endloading();
   document.getElementById("createtable").innerHTML = '<table class="ui selectable celled table"> <thead> <tr> <th>Begin Date</th> <th>End Date</th> <th>Unit</th> <th>Reading</th> </tr> </thead> <tbody> <tr> <td>-</td> <td>-</td> <td>-</td> <td>-</td> </tr> </tbody> </table>';
 }
 
@@ -25,6 +26,8 @@ function onSearch(){
   if(date == ""){
     alert("Please select the cut-off date!");
   }else {
+  	loading();
+
     geteMeterData(date, function(msg) {    
       resList = msg;          
       //log(resList);          
@@ -34,8 +37,17 @@ function onSearch(){
 
 }
 
+function loading(){
+	document.getElementById("loading").innerHTML = '<div class="ui active inline loader"></div> Please wait. Data is loading ......';
+}
+
+function endloading(){
+	document.getElementById("loading").innerHTML = '';
+}
+
 function redraw() {    
   document.getElementById("createtable").innerHTML = '';
+  endloading();
 
   if(resList.length>0){
 	  var content = '<table id="table" class="ui selectable celled table"><thead><tr><th>Begin Date</th><th>End Date</th><th>Unit</th><th>Reading</th></tr></thead><tbody>';        

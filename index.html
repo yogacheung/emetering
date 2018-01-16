@@ -32,23 +32,24 @@
         <button class="ui primary button" onclick="onSearch()">
           Search
         </button>
+        <div id="loading"></div>
       </div>
       <div class="item">
         <button class="ui button" onclick="onReset()">
           Reset
         </button>
-      </div>
+      </div>      
     </div>
     
     <br/>
-    
+
     <h4 class="ui horizontal divider header">  
       eMeter Reading Data List
     </h4>    
     <br/>
 
     <!-- Table --> 
-    <div id="createtable">
+    <div id="createtable">      
       <table class="ui selectable celled table">
         <thead>
           <tr>
@@ -67,6 +68,7 @@
           </tr>
         </tbody>
       </table>
+
     </div>
 
     <!-- Standard Meta -->
