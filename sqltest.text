@@ -1,0 +1,77 @@
+SELECT "2018-01-07" AS "EndDate", `Unit`, MAX(`Reading`) FROM `readings` WHERE `Remarks` = "R"  AND YEAR(`Datetime`) = YEAR("2018-01-07") AND MONTH(`Datetime`) = MONTH("2018-01-07") AND DAY(`Datetime`) = DAY("2018-01-07") GROUP BY `Unit`;
+
+
+SELECT "2017-12-07" AS "EndDate", `Unit`, MAX(`Reading`) FROM `readings` WHERE `Remarks` = "R"  AND YEAR(`Datetime`) = YEAR("2017-12-07") AND MONTH(`Datetime`) = MONTH("2017-12-07") AND DAY(`Datetime`) = DAY("2017-12-07") GROUP BY `Unit`;
+
+
+SELECT "2018-01-07" AS "EndDate", r1.`Unit`, MAX(r1.`Reading`) AS "Reading" FROM `readings` r1 WHERE r1.`Remarks` = "R"  AND YEAR(r1.`Datetime`) = YEAR("2018-01-07") AND MONTH(r1.`Datetime`) = MONTH("2018-01-07") AND DAY(r1.`Datetime`) = DAY("2018-01-07") GROUP BY r1.`Unit`;
+
+
+SELECT "2017-12-07" AS "StartDate", r2.`Unit`, MAX(r2.`Reading`) AS "Reading" FROM `readings` r2 WHERE r2.`Remarks` = "R"  AND YEAR(r2.`Datetime`) = YEAR("2017-12-07") AND MONTH(r2.`Datetime`) = MONTH("2017-12-07") AND DAY(r2.`Datetime`) = DAY("2017-12-07") GROUP BY r2.`Unit`;
+
+
+
+
+SELECT CASE WHEN DAY(r2.`Datetime`) = DAY("'.$startdate.'") THEN "2017-12-07" AS "StartDate" ELSE CONCATE(YEAR(r2.`Datetime`), "-", MONTH(r2.`Datetime`), "-", DAY(r2.`Datetime`)) AS "StartDate"
+, "2018-01-07" AS "EndDate", r1.`Unit`, MAX(r1.`Reading`) - MAX(r2.`Reading`) AS "Reading" 
+FROM `readings` r1, `readings` r2
+WHERE r1.`Remarks` = "R"  AND YEAR(r1.`Datetime`) = YEAR("2018-01-07") AND MONTH(r1.`Datetime`) = MONTH("2018-01-07") AND DAY(r1.`Datetime`) = DAY("2018-01-07") AND r2.`Remarks` = "R"  AND YEAR(r2.`Datetime`) = YEAR("2017-12-07") AND MONTH(r2.`Datetime`) = MONTH("2017-12-07") AND DAY(r2.`Datetime`) = DAY("2017-12-07") AND r1.`Unit` = r2.`Unit`
+GROUP BY r1.`Unit`, r2.`Unit`;
+
+
+SELECT "'.$enddate.'" AS "EndDate", r1.`Unit`, MAX(r1.`Reading`) - MAX(r2.`Reading`) AS "Reading", CASE WHEN DAY(r2.`Datetime`) = DAY("'.$startdate.'") THEN "'.$startdate.'" AS "StartDate" ELSE CONCATE(YEAR(r2.`Datetime`), "-", MONTH(r2.`Datetime`), "-", DAY(r2.`Datetime`)) AS "StartDate"
+FROM `readings` r1, `readings` r2
+WHERE r1.`Remarks` = "R"  AND YEAR(r1.`Datetime`) = YEAR("'.$enddate.'") AND MONTH(r1.`Datetime`) = MONTH("'.$enddate.'") AND DAY(r1.`Datetime`) = DAY("'.$enddate.'") AND r2.`Remarks` = "R"  AND YEAR(r2.`Datetime`) = YEAR("'.$startdate.'") AND MONTH(r2.`Datetime`) = MONTH("'.$startdate.'") AND DAY(r2.`Datetime`) >= DAY("'.$startdate.'") AND r1.`Unit` = r2.`Unit`
+GROUP BY r1.`Unit`, r2.`Unit`;
+
+
+SELECT "2018-01-07" AS "EndDate", r1.`Unit`, MAX(r1.`Reading`) - MAX(r2.`Reading`) AS "Reading", CASE WHEN DAY(r2.`Datetime`) = DAY("2017-12-07") THEN "2017-12-07" ELSE CONCAT("", YEAR(r2.`Datetime`), "-", MONTH(r2.`Datetime`), "-", DAY(r2.`Datetime`)) END AS "StartDate"
+FROM `readings` r1, `readings` r2
+WHERE r1.`Remarks` = "R"  AND YEAR(r1.`Datetime`) = YEAR("2018-01-07") AND MONTH(r1.`Datetime`) = MONTH("2018-01-07") AND DAY(r1.`Datetime`) = DAY("2018-01-07") AND r2.`Remarks` = "R"  AND YEAR(r2.`Datetime`) = YEAR("2017-12-07") AND MONTH(r2.`Datetime`) = MONTH("2017-12-07") AND DAY(r2.`Datetime`) >= DAY("2017-12-07") AND r1.`Unit` = r2.`Unit`
+GROUP BY r1.`Unit`, r2.`Unit`;
+
+
+SELECT "2017-10-07" AS "StartDate", "2011-11-07" AS "EndDate", `Unit`, MAX(`Reading`) - MIN(`Reading`) AS "Reading "FROM `readings` WHERE `Remarks` = "R" AND `Datetime` BETWEEN CONVERT(dateime, "2017-10-07") AND CONVET(datetime, "2017-11-07 23:59:59") GROUP BY `Unit`;
+
+SELECT MIN(date_format(`Datetime`, '%Y-%m-%d')) AS "StartDate", MAX(date_format(`Datetime`, '%Y-%m-%d')) AS "EndDate", `Unit`, MAX(`Reading`) - MIN(`Reading`) AS "Reading "FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`;
+
+SELECT MIN(date_format(`Datetime`, '%Y-%m-%d')) AS "StartDate", MAX(date_format(`Datetime`, '%Y-%m-%d')) AS "EndDate", `Unit`, MAX(`Reading`) - MIN(`Reading`) AS "Reading "FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, '%Y-%m-%d') BETWEEN "'.$startdate.'" AND "'.$enddate.'" GROUP BY `Unit`;
+
+
+SELECT "'.$startdate.'" AS "StartDate", "'.$enddate.'" AS "EndDate", r1.`Unit`, MAX(r2.`Reading`) - MAX(r1.`Reading`) AS "Reading" FROM `readings` r1, `readings` r2 WHERE r1.`Remarks` = "R" AND r2.`Remarks` = "R" AND date_format(r1.`Datetime`, "%Y-%m-%d") = "'.$startdate.'" AND date_format(r2.`Datetime`, "%Y-%m-%d") = "'.$enddate.'" AND  r1.`Unit` = r2.`Unit` GROUP BY r1.`Unit`, r2.`Unit`;';
+
+
+SELECT "2017-10-25" AS "StartDate", "2017-10-26" AS "EndDate", r1.`Unit`, MAX(r2.`Reading`) - MAX(r1.`Reading`) AS "Reading "FROM `readings` r1, `readings` r2 WHERE r1.`Remarks` = "R" AND r2.`Remarks` = "R" AND date_format(r1.`Datetime`, "%Y-%m-%d") = "2017-10-25" AND date_format(r2.`Datetime`, "%Y-%m-%d") = "2017-10-26" AND  r1.`Unit` = r2.`Unit` GROUP BY r1.`Unit`, r2.`Unit`; 
+
+SELECT "2018-01-15" AS "StartDate", "2018-01-16" AS "EndDate", r1.`Unit`, MAX(r2.`Reading`) - MAX(r1.`Reading`) AS "Reading "FROM `readings` r1, `readings` r2 WHERE r1.`Remarks` = "R" AND r2.`Remarks` = "R" AND date_format(r1.`Datetime`, "%Y-%m-%d") = "2018-01-15" AND date_format(r2.`Datetime`, "%Y-%m-%d") = "2018-01-16" AND  r1.`Unit` = r2.`Unit` GROUP BY r1.`Unit`, r2.`Unit`; 
+
+
+SELECT `Unit`, MAX(`Reading`) AS "Reading" FROM `readings` WHERE `Remarks` = "R"  GROUP BY `Unit`;
+
+
+
+SELECT `Unit`, MIN(`Datetime`) AS "StartDate", MAX(`Datetime`) AS "EndDate" FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-11-26" AND "2017-12-26" GROUP BY `Unit`;
+
+SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) AS "StartDate", MAX(date_format(`Datetime`, '%Y-%m-%d')) AS "EndDate" FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`;
+
+
+SELECT date_format(readinglist.`Datetime`, '%Y-%m-%d') AS StartDate, readinglist.`Unit`, MAX(readinglist.`Reading`) AS "Reading" FROM 
+(SELECT `Datetime`, `Unit`, `Reading` FROM `readings` WHERE `Remarks` = "R" AND (`Unit`, date_format(`Datetime`, '%Y-%m-%d')) IN (SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) FROM `readings` WHERE `Remarks` = "R" AND  date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`)) AS readinglist GROUP BY readinglist.`Unit`;
+
+
+SELECT `Datetime`, `Unit`, `Reading` FROM `readings` WHERE `Remarks` = "R" AND (`Unit`, date_format(`Datetime`, '%Y-%m-%d')) IN (SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) FROM `readings` WHERE `Remarks` = "R" AND  date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`);
+
+
+
+SELECT date_format(ANY_VALUE(result.`Datetime`), '%Y-%m-%d') AS StartDate, result.`Unit`, MAX(result.`Reading`) FROM (SELECT `Datetime`, `Unit`, `Reading` FROM `readings` WHERE `Remarks` = "R" AND (`Unit`, date_format(`Datetime`, '%Y-%m-%d')) IN (SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) FROM `readings` WHERE `Remarks` = "R" AND  date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`)) result GROUP BY result.`Unit`;
+
+
+
+SELECT date_format(ANY_VALUE(`Datetime`), '%Y-%m-%d') AS EndDate, `Unit`, MAX(`Reading`) FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, '%Y-%m-%d') = "2017-11-07" GROUP BY `Unit`;
+
+
+SELECT date_format(ANY_VALUE(result.`Datetime`),'%Y-%m-%d') AS StartDate, date_format(ANY_VALUE(r2.`Datetime`),'%Y-%m-%d') AS EndDate, result.`Unit`, MAX(r2.`Reading`) - MAX(result.`Reading`) AS Reading FROM (SELECT `Datetime`, `Unit`, `Reading` FROM `readings` WHERE `Remarks` = "R" AND (`Unit`, date_format(`Datetime`, '%Y-%m-%d')) IN (SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) FROM `readings` WHERE `Remarks` = "R" AND  date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`)) result,  `readings` r2 WHERE r2.`Remarks` = "R" AND date_format(r2.`Datetime`, '%Y-%m-%d') = "2017-11-07" AND r2.`Unit` = result.`Unit` GROUP BY r2.`Unit`, result.`Unit`;
+
+
+
+SELECT date_format(result.`Datetime`,'%Y-%m-%d') AS StartDate, date_format(r2.`Datetime`,'%Y-%m-%d') AS EndDate, result.`Unit`, MAX(r2.`Reading`) - MAX(result.`Reading`) AS Reading FROM (SELECT `Datetime`, `Unit`, `Reading` FROM `readings` WHERE `Remarks` = "R" AND (`Unit`, date_format(`Datetime`, '%Y-%m-%d')) IN (SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) FROM `readings` WHERE `Remarks` = "R" AND  date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`)) result,  `readings` r2 WHERE r2.`Remarks` = "R" AND date_format(r2.`Datetime`, '%Y-%m-%d') = "2017-11-07" AND r2.`Unit` = result.`Unit` GROUP BY r2.`Unit`, result.`Unit`;

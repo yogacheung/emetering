@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-	<title>eMetering</title>
+  <title>eMetering</title>
   
   <!-- JavaScript -->
   <script src="js/jquery.min.js"></script> 
@@ -15,7 +15,7 @@
   <!-- CSS --> 
   <link rel="stylesheet" type="text/css" href="css/semantic.min.css">
   </head>
-<body>
+<body onload="getCurrent()">
     <br/>
     <div class="ui menu">
       <div class="item">
@@ -41,10 +41,16 @@
       </div>      
     </div>
     
-    <br/>
-
     <h4 class="ui horizontal divider header">  
-      eMeter Reading Data List
+      eMeter Lastest Reading
+    </h4>    
+    <br/>
+  <div id="current"></div>
+
+    <br/>
+    
+    <h4 class="ui horizontal divider header">  
+      eMeter Monthly Reading
     </h4>    
     <br/>
 

@@ -6,7 +6,15 @@ var resList = [];
 
 function geteMeterData(date, callback){
   $.ajax({            
-      url: "/emetering.php?date=" + date + "&tlength=12",      
+      url: "/emetering.php?date=" + date + "&tlength=1",      
+      dataType:"json",  
+    })
+    .done(callback);
+}
+
+function geteMeterCurrent(callback){
+  $.ajax({            
+      url: "/emeteringcurrent.php",
       dataType:"json",  
     })
     .done(callback);
@@ -35,6 +43,23 @@ function onSearch(){
     });       
   }
 
+}
+
+function getCurrent(){
+	geteMeterCurrent(function(result){
+		log(result);
+		var content = '<table class="ui celled table"><thead><tr class="center aligned">';
+		for(i in result){
+			content += '<th>'+result[i].Unit+'</th>';
+		}
+  		content += '</tr></thead><tbody><tr class="center aligned">';
+  		for(i in result){
+			content += '<td>'+result[i].Reading+'</td>';
+		}
+		content += '</tr></tbody></table>';
+		
+  		document.getElementById("current").innerHTML = content;
+	});
 }
 
 function loading(){
