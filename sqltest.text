@@ -74,4 +74,39 @@ SELECT date_format(ANY_VALUE(result.`Datetime`),'%Y-%m-%d') AS StartDate, date_f
 
 
 
-SELECT date_format(result.`Datetime`,'%Y-%m-%d') AS StartDate, date_format(r2.`Datetime`,'%Y-%m-%d') AS EndDate, result.`Unit`, MAX(r2.`Reading`) - MAX(result.`Reading`) AS Reading FROM (SELECT `Datetime`, `Unit`, `Reading` FROM `readings` WHERE `Remarks` = "R" AND (`Unit`, date_format(`Datetime`, '%Y-%m-%d')) IN (SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) FROM `readings` WHERE `Remarks` = "R" AND  date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`)) result,  `readings` r2 WHERE r2.`Remarks` = "R" AND date_format(r2.`Datetime`, '%Y-%m-%d') = "2017-11-07" AND r2.`Unit` = result.`Unit` GROUP BY r2.`Unit`, result.`Unit`;
+SELECT date_format(result.`Datetime`,'%Y-%m-%d') AS StartDate, date_format(r2.`Datetime`,'%Y-%m-%d') AS EndDate, result.`Unit`, MAX(r2.`Reading`) - MAX(result.`Reading`) AS Reading FROM (SELECT `Datetime`, `Unit`, `Reading` FROM `readings` WHERE `Remarks` = "R" AND (`Unit`, date_format(`Datetime`, '%Y-%m-%d')) IN (SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) FROM `readings` WHERE `Remarks` = "R" AND  date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`)) result,  `readings` r2 WHERE r2.`Remarks` = "R" AND date_format(r2.`Datetime`, '%Y-%m-%d') = "2017-11-07" AND r2.`Unit` = result.`Unit` GROUP BY r2.`Unit`, result.`Unit`;  8s
+
+
+CREATE VIEW [New Reading] AS
+SELECT `Datetime`, `Unit`, `Reading`
+FROM `readings`
+WHERE `Remarks` = "R";
+
+SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) AS StartDate FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`; 1.3s
+
+SELECT date_format(result.`Datetime`, '%Y-%m-%d') AS StartDate, result.`Unit`, MAX(result.`Reading`) FROM (SELECT `Datetime`, `Unit`, `Reading` FROM `readings` WHERE `Remarks` = "R" AND (`Unit`, date_format(`Datetime`, '%Y-%m-%d')) IN (SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) FROM `readings` WHERE `Remarks` = "R" AND  date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`)) result GROUP BY result.`Unit`; 3.2s
+
+INSERT INTO `temp_reading`(`StartDate`, `Unit`, `MinReading`)
+SELECT date_format(result.`Datetime`, '%Y-%m-%d') AS StartDate, result.`Unit`, MAX(result.`Reading`) FROM (SELECT `Datetime`, `Unit`, `Reading` FROM `readings` WHERE `Remarks` = "R" AND (`Unit`, date_format(`Datetime`, '%Y-%m-%d')) IN (SELECT `Unit`, MIN(date_format(`Datetime`, '%Y-%m-%d')) FROM `readings` WHERE `Remarks` = "R" AND  date_format(`Datetime`, '%Y-%m-%d') BETWEEN "2017-10-07" AND "2017-11-07" GROUP BY `Unit`)) result GROUP BY result.`Unit`; 3.8
+
+INSERT INTO `temp_reading`(`EndDate`, `Unit`, `MaxReading`) SELECT date_format(`Datetime`, "%Y-%m-%d") AS EndDate, `Unit`, MAX(`Reading`) FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, '%Y-%m-%d') = "2017-11-07" GROUP BY `Unit`; 1.6s
+
+SELECT r1.`StartDate`, r2.`EndDate`, r1.`Unit`, r2.`MaxReading`-r1.`MinReading` AS reading FROM `temp_reading` r1, `temp_reading` r2 WHERE r1.`Unit` = r2.`Unit` AND r1.`StartDate` <> "0000-00-00" AND r2.`EndDate` <> "0000-00-00"; 0.000003s
+
+
+INSERT INTO `daily_last_reading`(`Date`, `Unit`, `Reading`) SELECT date_format(`Datetime`, "%Y-%m-%d") AS datet, `Unit`, MAX(`Reading`)  FROM `readings` WHERE `Remarks` = "R" GROUP BY `Unit`, datet ORDER BY datet;
+
+SELECT r1.`Date` AS StartDate, r2.`Date` AS EndDate, r1.`Unit`, r2.`Reading` - r1.`Reading` FROM `daily_last_reading` r1, `daily_last_reading` r2 WHERE r1.`Unit` = r2.`Unit` AND r1.`Date` = "2017-12-21" AND r2.`Date` = "2018-01-21";
+
+SELECT `Unit`, MIN(`Date`) FROM `daily_last_reading` WHERE `Date` BETWEEN "2017-12-21" AND "2018-01-21" GROUP BY `Unit`;
+
+SELECT r1.`Date` AS StartDate, r2.`Date` AS EndDate, r1.`Unit`, r2.`Reading` - r1.`Reading` AS Reading FROM `daily_last_reading` r1, `daily_last_reading` r2 WHERE r1.`Unit` = r2.`Unit` AND (r1.`Unit`, r1.`Date`) IN (SELECT `Unit`, MIN(`Date`) FROM `daily_last_reading` WHERE `Date` BETWEEN "2017-12-21" AND "2018-01-21" GROUP BY `Unit`) AND r2.`Date` = "2018-01-21";
+
+SELECT r1.`Date` AS StartDate, r2.`Date` AS EndDate, r1.`Unit`, r2.`Reading` - r1.`Reading` FROM `daily_last_reading` r1, `daily_last_reading` r2 WHERE r1.`Unit` = r2.`Unit` AND (r1.`Unit`, r1.`Date`) IN (SELECT `Unit`, MIN(`Date`) FROM `daily_last_reading` WHERE `Date` BETWEEN "2017-12-21" AND "2018-01-21" GROUP BY `Unit`) AND r2.`Date` = "2018-01-21" ORDER BY r1..`Unit`;
+
+
+SELECT r1.`Date` AS StartDate, r2.`Date` AS EndDate, r1.`Unit`, r2.`Reading` - r1.`Reading` AS Reading FROM `daily_last_reading` r1, `daily_last_reading` r2 WHERE r1.`Unit` = r2.`Unit` AND (r1.`Unit`, r1.`Date`) IN (SELECT `Unit`, MIN(`Date`) FROM `daily_last_reading` WHERE `Date` BETWEEN "2017-12-21" AND "2018-01-21" GROUP BY `Unit`) AND r2.`Date` = "2018-01-21" ORDER BY r1.`Unit`;
+
+INSERT INTO `daily_last_reading`(`Date`, `Unit`, `Reading`) SELECT date_format(`Datetime`, "%Y-%m-%d"), `Unit`, MAX(`Reading`)  FROM `readings` WHERE `Remarks` = "R" date_format(`Datetime`, "%Y-%m-%d") = "2018-01-22" GROUP BY `Unit`;
+
+SELECT date_format(`Datetime`, "%Y-%m-%d"), `Unit`, MAX(`Reading`)  FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, "%Y-%m-%d") = "2018-01-22" GROUP BY `Unit`;
