@@ -11,8 +11,8 @@ $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } 
-	
-$sql = 'INSERT INTO `daily_last_reading`(`Date`, `Unit`, `Reading`) SELECT date_format(`Datetime`, "%Y-%m-%d"), `Unit`, MAX(`Reading`)  FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, "%Y-%m-%d") = "'.date("Y-m-d",time() – 86400).'" GROUP BY `Unit`;';
+
+$sql = 'INSERT INTO `daily_last_reading`(`Date`, `Unit`, `Reading`) SELECT date_format(`Datetime`, "%Y-%m-%d"), `Unit`, MAX(`Reading`) FROM `readings` WHERE `Remarks` = "R" AND date_format(`Datetime`, "%Y-%m-%d") = CURRENT_DATE - INTERVAL 1 DAY GROUP BY `Unit`';
 
 $result = $conn->query($sql);
 
