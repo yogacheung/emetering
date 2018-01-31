@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
   <!-- Site Properities -->
-  <title>eMetering | Login</title>
+  <title>eMetering | Update Password</title>
   <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" type="text/css" href="css/site.css">
 
@@ -28,7 +28,7 @@
 
   <script src="js/jquery.min.js"></script>
   <script src="js/md5.js"></script>
-  <script src="js/login.js"></script>
+  <script src="js/updatepw.js"></script>
   <style type="text/css">
     body {
       background-color: #DEDEDE;
@@ -67,13 +67,23 @@
           </div>
         </div>
         <div class="field">
-          <div class="ui left icon input">
-            <input type="password" id="password" placeholder="Password" onkeydown = "if (event.keyCode == 13) onlogin()">
+          <div class="ui left icon input">            
+            <input type="password" id="oldpassword" placeholder="Old Password">
           </div>
         </div>
-        <div class="ui fluid large teal submit button" onclick="onlogin()">Login</div>
+        <div class="field">
+          <div class="ui left icon input">            
+            <input type="password" id="newpassword1" placeholder="New Password">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input">
+            <input type="password" id="newpassword2" placeholder="Confirm New Password" onkeydown = "if (event.keyCode == 13) onupdate()">
+          </div>
+        </div>
+        <div class="ui fluid large teal submit button" onclick="onupdate()">Submit</div>
       </div>
-      <a href="updatepw.html">Update Password?</a>
+      <a href="index.html">Back to Login</a>
       <div class="error"></div>
 
     </form>

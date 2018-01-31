@@ -45,19 +45,31 @@ function onSearch(){
 
 }
 
+function logout(){
+	if(confirm("Comfirm to logout?")){
+		window.location.href = "./index.html";
+	}
+}
+
 function getCurrent(){
 	geteMeterCurrent(function(result){
-		log(result);
-		var content = '<table class="ui celled table"><thead><tr class="center aligned">';
-		for(i in result){
-			content += '<th>'+result[i].Unit+'</th>';
+		//log(result);
+		var x=0, y=-1;
+		var content = '';
+		for(var i=0; i<result.length/10; i++){
+			x = y+1;
+			y = y+10;
+			if(y >= result.length) y = result.length-1;
+			content += '<table class="ui celled table"><thead><tr class="center aligned">';
+			for(var j=x; j<=y; j++){
+				content += '<th>'+result[j].Unit+'</th>';
+			}
+	  		content += '</tr></thead><tbody><tr class="center aligned">';
+	  		for(j=x; j<=y; j++){
+				content += '<td>'+result[j].Reading+'</td>';
+			}
+			content += '</tr></tbody></table>';
 		}
-  		content += '</tr></thead><tbody><tr class="center aligned">';
-  		for(i in result){
-			content += '<td>'+result[i].Reading+'</td>';
-		}
-		content += '</tr></tbody></table>';
-		
   		document.getElementById("current").innerHTML = content;
 	});
 }
