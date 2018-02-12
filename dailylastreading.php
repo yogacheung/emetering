@@ -16,7 +16,7 @@ $sql = 'INSERT INTO `daily_last_reading`(`Date`, `Unit`, `Reading`) SELECT date_
 
 $result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
+if ($result > 0) {
 	//var_dump($result->num_rows);		
 }
 
