@@ -53,22 +53,10 @@ function logout(){
 
 function getCurrent(){
 	geteMeterCurrent(function(result){
-		//log(result);
-		var x=0, y=-1;
+		//log(result);		
 		var content = '';
-		for(var i=0; i<result.length/10; i++){
-			x = y+1;
-			y = y+10;
-			if(y >= result.length) y = result.length-1;
-			content += '<table class="ui celled table"><thead><tr class="center aligned">';
-			for(var j=x; j<=y; j++){
-				content += '<th>'+result[j].Unit+'</th>';
-			}
-	  		content += '</tr></thead><tbody><tr class="center aligned">';
-	  		for(j=x; j<=y; j++){
-				content += '<td>'+result[j].Reading+'</td>';
-			}
-			content += '</tr></tbody></table>';
+		for(var i=0; i<result.length; i++){			
+			content += '<table class="ui celled table"><thead><tr class="center aligned"><th>'+result[i].Unit+'</th></tr></thead><tbody><tr class="center aligned"><td>'+result[i].Reading+'</td></tr></tbody></table>';
 		}
   		document.getElementById("current").innerHTML = content;
 	});
